@@ -1,8 +1,7 @@
-# NIR-EGCC: A Color Constancy Method Guided by Near-Infrared Edge Information
-
-This is the official implementation of **NIR-EGCCNet**, a color constancy framework designed to restore RGB images by leveraging Near-Infrared edge guidance.
-
----
+# DSTC-SRNet
+A Multi-Frame Super-Resolution Method Based on Deep Spatio-Temporal Collaboration 
+# Abstract
+Single-image super-resolution (SISR) methods rely on learning image priors in order to add high frequency details, resulting in poor algorithmic robustness. Existing multi-frame super-resolution (MFSR) methods reconstruct high frequency details by fusing sub-pixel displacement information from multiple frames. However, in complex motion and realistic scenarios, they often struggle to fully extract and effectively fuse complementary latent information within the sequence, leading to issues such as blurred details and ghosting in the reconstructed images. Therefore, in this paper, we propose an MFSR reconstruction method based on deep spatiotemporal collaboration, namely DSTC-SRNet. We employ a collaborative reconstruction framework, which is centered on temporal memory, spatial perception, and adaptive fusion. The aim of this design is to facilitate the comprehensive and orderly utilization of spatio-temporal information. First, we design a dual-stream framework that decouples information streams into parallel multi-scale temporal memory stream (MTMS) and dynamic receptive-field spatial stream (DRSS) for independent processing. Second, a novel bidirectional cross-attention fusion (BCAF) module is developed to align and merge features to generate a deep feature representation. Third, a multi-level feature enhancement (MLFE) module is further presented to refine the fused feature representation. Finally, a progressive decoder is utilized to decode the refined feature representation to produce high-resolution (HR) images. Experimental results on the BSR public dataset demonstrate that for 4× super-resolution reconstruction tasks, our method outperforms the existing methods by 5.03% and 21.9% in terms of peak signal-to-noise ratio (PSNR) and learned perceptual image patch similarity (LPIPS), respectively.
 
 ##  Project Structure
 
@@ -10,101 +9,45 @@ The project directory is organized as follows :
 
 ```text
 NIR_EGCC_CODE/
-├─ checkpoints/               # Saved weights (.h5)
-├─ data/
-│   ├── train/                # Training .h5 files
-│   ├── test/                 # Testing .h5 files
-│   ├── train_list.txt        # Mapping for training pairs
-│   └── test_list.txt         # Mapping for testing pairs
-├── model/
-│   └── nir_egcc.py           # Model architecture
+├─ checkpoints/               # Saved weights 
+├─ dataset/                   # Saved weights 
+├── model/                    # Model architecture
+├── support/                  # Downsample for SBSR
 ├── results/                  # Inference results 
-├── dataset_manager.py        # Data loading logic
-├── losses.py                 # Loss functions
+├── metrics.py                # PSNR, SSIM and LPIPS
+├── config.py                 # Setting
+├── dataset.py                # Data loading logic
+├── loss.py                   # Loss functions
 ├── utils.py                  # Helper functions
-├── train_stage_1.py          # Stage 1 training script
-├── train_stage_2.py          # Stage 2 fine-tuning script
+├── train.py                  # training script
 └── test.py                   # Evaluation script
 ```
 
----
+# Installation
 
-##  Requirements
+This repository is built in PyTorch 2.0.0 (Python3.10, CUDA12.6).
+Follow these intructions
 
-The project is tested with the following environment:
-
-* **Python** == 3.7.16
-* **TensorFlow-GPU** == 2.7.0
-* **NumPy** == 1.21.6
-* **OpenCV-Python** == 4.12.0
-* **scikit-image** == 0.19.3
-* **h5py** == 3.8.0
-* **Pandas** == 1.3.5
-* **Matplotlib** == 3.5.3
-
----
-
-## Data Preparation
-
-**Source:** OMSIV subset from the [SSMID Dataset](https://xavysp.github.io/ssmid-dataset/).
-
-**Data Format:**
-* **Input**: 4-channel `.h5` files (RGB + NIR).
-* **Ground Truth**: 3-channel `.h5` files (RGB).
-
-**Mapping Lists:**
-Place `train_list.txt` and `test_list.txt` in the `data/` folder. Paths must be relative to the `.txt` location:
-
-```text
-# train_list.txt example
-train/input_0001.h5 train/gt_0001.h5
-train/input_0002.h5 train/gt_0002.h5
-……
-# test_list.txt example
-test/input_0001.h5 test/gt_0001.h5
-……
+1. Make conda environment
+```
+conda create -n pytorch2.0 python=3.10
+conda activate pytorch2.0
 ```
 
----
-
-##  Usage
-
-### 1. Stage 1
-In the first stage, the network jointly learns structural representations and coarse color restoration to establish a stable global reconstruction baseline.
-```bash
-python train_stage_1.py --epochs 100 --batch_size 8 --lr 1e-4
+2. Install dependencies
+```
+conda install pytorch=2.0 torchvision -c pytorch
+pip install matplotlib scikit-learn scikit-image opencv-python tqdm
+pip install numpy scipy lpips pillow
 ```
 
-### 2. Stage 2
-The optimization focus is shifted toward color correction by significantly increasing color-related loss weights, enabling precise color refinement while maintaining structural fidelity.
-```bash
-# Provide the path to your best weights from Stage 1
-python train_stage_2.py --pretrained_path checkpoints/Stage_1/xxx/final_weights.h5 --epochs 50 --lr 1e-5
-```
+# Dataset
+We provide the dataset of our work. You can download it by the following link: [dataset](https://pan.baidu.com/s/1jQBMkcJPPafd8hDNj323CQ?pwd=3114 ) code:3114.
 
-### 3. Evaluation and Inference
-To evaluate the model you just trained in Stage 2, run:
-```bash
-# Provide the path to your Stage 2 weights
-python test.py --ckpt_path checkpoints/Stage_2/xxx/finetuned_final.h5
-```
+# Usage
 
----
-
-## Pre-trained Models
-
-Pre-trained weights are available in the `checkpoints/pretrained/` directory. 
-
-* **Stage 1 :**`my_stage_1.h5`
-* **Stage 2 :**`my_stage_2.h5`
-
-### Inference with Pre-trained Weights
-To evaluate the final model using these weights, run:
-```bash
-python test.py --ckpt_path checkpoints/pretrained/my_stage_2.h5
-```
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Download and release DTSC.zip. <br>
+Put the dataset in the dataset folder. <br>
+Setup the required parameters. <br>
+Run main.py for training or testing.
 
