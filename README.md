@@ -9,7 +9,7 @@ This is the official implementation of **NIR-EIGCCNet**, a color constancy frame
 The project directory is organized as follows :
 
 ```text
-NIR_EIGCC_CODE/
+NIR_EIGCC/
 ├─ checkpoints/               # Saved weights (.h5)
 ├─ data/
 │   ├── train/                # Training .h5 files
@@ -108,3 +108,4 @@ python test.py --ckpt_path checkpoints/pretrained/my_stage_2.h5
 
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
